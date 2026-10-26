@@ -340,6 +340,435 @@
       color: var(--brand);
     }
 
+    /* ===== Shift Tool Styles ===== */
+    .shift-container {
+      padding: 24px 32px 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    /* Upload & Input Zone */
+    .drop-zone {
+      border: 2px dashed #CBD5E1;
+      border-radius: var(--radius-card);
+      padding: 28px 20px;
+      text-align: center;
+      background: #F8FAFC;
+      cursor: pointer;
+      transition: all var(--transition);
+      position: relative;
+    }
+
+    .drop-zone:hover, .drop-zone.dragover {
+      border-color: var(--brand);
+      background: var(--brand-light);
+    }
+
+    .drop-icon {
+      font-size: 32px;
+      margin-bottom: 8px;
+    }
+
+    .drop-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-heading);
+      margin-bottom: 4px;
+    }
+
+    .drop-hint {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .file-input-hidden {
+      display: none;
+    }
+
+    /* Paste toggle & textarea */
+    .paste-toggle-row {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: -12px;
+    }
+
+    .btn-link {
+      background: none;
+      border: none;
+      color: var(--brand);
+      font-size: 13px;
+      cursor: pointer;
+      text-decoration: underline;
+      padding: 4px 6px;
+      font-family: inherit;
+    }
+
+    .paste-box {
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .paste-box.show {
+      display: flex;
+    }
+
+    .paste-textarea {
+      width: 100%;
+      height: 120px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-btn);
+      padding: 10px 12px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 13px;
+      line-height: 1.5;
+      resize: vertical;
+      background: #FFFFFF;
+      color: var(--text);
+    }
+
+    .paste-textarea:focus {
+      outline: none;
+      border-color: var(--brand);
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
+    }
+
+    /* File Info Bar */
+    .file-info-bar {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      background: #EFF6FF;
+      border: 1px solid #BFDBFE;
+      padding: 10px 16px;
+      border-radius: var(--radius-btn);
+      font-size: 13px;
+      color: #1E40AF;
+    }
+
+    .file-info-bar.show {
+      display: flex;
+    }
+
+    .file-info-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .file-info-tags {
+      display: flex;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .badge-bom {
+      background: #DBEAFE;
+      color: #1D4ED8;
+      font-size: 11px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+
+    .btn-clear {
+      background: none;
+      border: none;
+      color: #EF4444;
+      cursor: pointer;
+      font-size: 13px;
+      padding: 2px 6px;
+    }
+
+    /* Shift Controls Card */
+    .control-card {
+      background: #FFFFFF;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .control-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .control-label {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-heading);
+      min-width: 90px;
+    }
+
+    .input-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .shift-input {
+      width: 140px;
+      padding: 8px 12px;
+      font-size: 15px;
+      font-family: inherit;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-btn);
+      color: var(--text-heading);
+      font-weight: 600;
+    }
+
+    .shift-input:focus {
+      outline: none;
+      border-color: var(--brand);
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
+    }
+
+    .input-unit {
+      font-size: 13px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    /* Preset Quick Buttons */
+    .preset-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .btn-preset {
+      background: #F1F5F9;
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 500;
+      padding: 6px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all var(--transition);
+      font-family: inherit;
+    }
+
+    .btn-preset:hover {
+      background: #E2E8F0;
+      border-color: #CBD5E1;
+      color: var(--text-heading);
+    }
+
+    .btn-preset.plus {
+      color: #047857;
+      background: #ECFDF5;
+      border-color: #A7F3D0;
+    }
+    .btn-preset.plus:hover {
+      background: #D1FAE5;
+    }
+
+    .btn-preset.minus {
+      color: #B45309;
+      background: #FFFBEB;
+      border-color: #FDE68A;
+    }
+    .btn-preset.minus:hover {
+      background: #FEF3C7;
+    }
+
+    .btn-reset {
+      background: #F8FAFC;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 12px;
+      padding: 6px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .btn-reset:hover {
+      color: #EF4444;
+      border-color: #FCA5A5;
+      background: #FEF2F2;
+    }
+
+    /* Warning & Notice Banners */
+    .warn-banner {
+      display: none;
+      background: #FFFBEB;
+      border: 1px solid #FCD34D;
+      border-radius: var(--radius-btn);
+      padding: 12px 16px;
+      font-size: 13px;
+      color: #B45309;
+      line-height: 1.5;
+    }
+
+    .warn-banner.show {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .warn-banner .warn-icon {
+      font-size: 16px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    /* Action bar */
+    .action-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      background: var(--brand);
+      color: #FFFFFF;
+      border: none;
+      padding: 10px 22px;
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: var(--radius-btn);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 2px 6px rgba(37,99,235,0.3);
+      transition: all var(--transition);
+      font-family: inherit;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: var(--brand-dark);
+      box-shadow: 0 4px 10px rgba(37,99,235,0.4);
+    }
+
+    .btn-primary:disabled {
+      background: #94A3B8;
+      cursor: not-allowed;
+      box-shadow: none;
+      opacity: 0.7;
+    }
+
+    .status-summary {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    /* Preview Table Section */
+    .preview-section {
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .preview-section.show {
+      display: flex;
+    }
+
+    .preview-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .preview-table-wrapper {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-btn);
+      overflow-x: auto;
+      background: #FFFFFF;
+    }
+
+    .preview-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      text-align: left;
+    }
+
+    .preview-table th {
+      background: #F8FAFC;
+      color: var(--text-muted);
+      font-weight: 600;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .preview-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+
+    .preview-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .preview-table tr.has-warn {
+      background: #FFFBEB;
+    }
+
+    .preview-table tr.has-error {
+      background: #FEF2F2;
+    }
+
+    .time-orig {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      color: var(--text-muted);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .time-shifted {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      color: #1E40AF;
+      font-weight: 600;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .sub-text {
+      color: var(--text);
+      line-height: 1.4;
+      max-width: 320px;
+      word-break: break-word;
+    }
+
+    .clamped-badge {
+      display: inline-block;
+      font-size: 10px;
+      color: #B45309;
+      background: #FEF3C7;
+      padding: 1px 5px;
+      border-radius: 3px;
+      margin-left: 4px;
+      font-weight: 600;
+    }
+
+    .invalid-badge {
+      display: inline-block;
+      font-size: 10px;
+      color: #B91C1C;
+      background: #FEE2E2;
+      padding: 1px 5px;
+      border-radius: 3px;
+      margin-left: 4px;
+      font-weight: 600;
+    }
+
     /* ===== Merge Preview (Tab 3) ===== */
     .merge-preview {
       margin: 0 32px 28px;
@@ -516,57 +945,136 @@
           <div class="tool-emoji blue">⏱️</div>
           <div>
             <h2>时间轴偏移</h2>
-            <p>批量将字幕时间整体提前或推迟，快速修正音画不同步问题。支持精确到毫秒的正向与负向偏移。</p>
+            <p>批量将字幕时间整体提前或推迟，快速修正音画不同步问题。支持精确到毫秒的正向与负向偏移，所有操作均在浏览器本地完成。</p>
           </div>
         </div>
 
-        <div class="coming-banner">
-          <span class="banner-icon">🚧</span>
-          <div>
-            <strong>功能即将上线</strong> — 本工具正在开发中，敬请期待！
+        <div class="shift-container">
+          <!-- 上传 / 拖放区域 -->
+          <div
+            id="dropZone"
+            class="drop-zone"
+            tabindex="0"
+            role="button"
+            aria-label="点击或拖拽上传 SRT 文件"
+          >
+            <input
+              type="file"
+              id="fileInput"
+              class="file-input-hidden"
+              accept=".srt"
+            />
+            <div class="drop-icon">📂</div>
+            <div class="drop-title">点击或拖拽 .srt 文件到这里</div>
+            <div class="drop-hint">支持标准 SRT 字幕，保留 UTF-8 BOM 编码，纯本地解析</div>
           </div>
+
+          <!-- 粘贴切换与文本框 -->
+          <div class="paste-toggle-row">
+            <button type="button" class="btn-link" id="togglePasteBtn">
+              ✏️ 手动粘贴 SRT 文本
+            </button>
+          </div>
+
+          <div class="paste-box" id="pasteBox">
+            <textarea
+              id="pasteTextarea"
+              class="paste-textarea"
+              placeholder="在此粘贴 SRT 文本，例如：&#10;1&#10;00:00:01,000 --> 00:00:04,500&#10;Hello world"
+              spellcheck="false"
+            ></textarea>
+          </div>
+
+          <!-- 文件已加载信息条 -->
+          <div class="file-info-bar" id="fileInfoBar">
+            <div class="file-info-left">
+              <span id="fileNameDisplay">📄 sample.srt</span>
+              <span id="fileCountDisplay" style="color: #64748B; font-size: 12px;">(0 条字幕)</span>
+              <div class="file-info-tags">
+                <span class="badge-bom" id="bomBadge" style="display: none;">UTF-8 BOM</span>
+              </div>
+            </div>
+            <button type="button" class="btn-clear" id="clearFileBtn" title="清除重新选择">
+              ✕ 清除
+            </button>
+          </div>
+
+          <!-- 控制面板：偏移量输入与快捷预设 -->
+          <div class="control-card">
+            <div class="control-row">
+              <span class="control-label">偏移时间：</span>
+              <div class="input-group">
+                <input
+                  type="number"
+                  id="shiftAmountInput"
+                  class="shift-input"
+                  value="0"
+                  step="50"
+                  placeholder="0"
+                />
+                <span class="input-unit">毫秒 (ms)</span>
+              </div>
+              <button type="button" class="btn-reset" id="resetShiftBtn" title="归零">
+                重置 0ms
+              </button>
+            </div>
+
+            <div class="control-row">
+              <span class="control-label">快捷调整：</span>
+              <div class="preset-group">
+                <button type="button" class="btn-preset plus" data-shift="100">+100ms</button>
+                <button type="button" class="btn-preset plus" data-shift="500">+500ms</button>
+                <button type="button" class="btn-preset plus" data-shift="1000">+1000ms</button>
+                <button type="button" class="btn-preset plus" data-shift="2500">+2500ms</button>
+                <span style="border-left: 1px solid var(--border); margin: 0 4px;"></span>
+                <button type="button" class="btn-preset minus" data-shift="-100">-100ms</button>
+                <button type="button" class="btn-preset minus" data-shift="-500">-500ms</button>
+                <button type="button" class="btn-preset minus" data-shift="-1000">-1000ms</button>
+                <button type="button" class="btn-preset minus" data-shift="-2500">-2500ms</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 提示/告警栏 -->
+          <div class="warn-banner" id="warnBanner">
+            <span class="warn-icon">⚠️</span>
+            <div id="warnMessage"></div>
+          </div>
+
+          <!-- 操作栏：下载按钮与状态统计 -->
+          <div class="action-bar">
+            <button type="button" id="downloadBtn" class="btn-primary" disabled>
+              <span>💾</span>
+              <span>下载偏移后的 SRT</span>
+            </button>
+            <span class="status-summary" id="statusSummary">请先选择或粘贴 SRT 字幕</span>
+          </div>
+
+          <!-- 实时预览区 -->
+          <div class="preview-section" id="previewSection">
+            <div class="preview-header">
+              <span>字幕对比预览（展示前 10 条）</span>
+              <span id="previewCountNote" style="font-size: 12px; color: var(--text-muted);">共 0 条</span>
+            </div>
+            <div class="preview-table-wrapper">
+              <table class="preview-table">
+                <thead>
+                  <tr>
+                    <th style="width: 50px;">#</th>
+                    <th>原始时间轴</th>
+                    <th>偏移后时间轴</th>
+                    <th>字幕正文</th>
+                  </tr>
+                </thead>
+                <tbody id="previewTbody">
+                  <!-- 动态插入行 -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
         </div>
 
-        <div class="feature-section">
-          <h3>计划功能</h3>
-          <ul class="feature-list">
-            <li>
-              <span class="feat-icon">📂</span>
-              <span>
-                <span class="feat-label">拖放上传</span>
-                <span class="feat-desc">支持拖拽或点击选择字幕文件</span>
-              </span>
-            </li>
-            <li>
-              <span class="feat-icon">⬆️⬇️</span>
-              <span>
-                <span class="feat-label">正 / 负偏移</span>
-                <span class="feat-desc">提前或推迟，支持毫秒精度输入</span>
-              </span>
-            </li>
-            <li>
-              <span class="feat-icon">👁️</span>
-              <span>
-                <span class="feat-label">实时预览</span>
-                <span class="feat-desc">偏移前后时间轴对比显示</span>
-              </span>
-            </li>
-            <li>
-              <span class="feat-icon">💾</span>
-              <span>
-                <span class="feat-label">一键下载</span>
-                <span class="feat-desc">处理完成后直接下载到本地</span>
-              </span>
-            </li>
-          </ul>
-        </div>
-
-        <div class="format-tags">
-          <span class="format-tag blue">SRT</span>
-          <span class="format-tag purple">ASS / SSA</span>
-          <span class="format-tag green">VTT</span>
-          <span class="format-tag gray">LRC</span>
-        </div>
       </div>
     </section>
 
@@ -751,6 +1259,422 @@
         panel.classList.toggle('active', panel.id === `panel-${tabId}`);
       });
     }
+
+    /* ============================================================
+     * 时间轴偏移工具 (纯本地实现，零网络请求)
+     * ============================================================ */
+    (function initShiftTool() {
+      // 状态变量
+      let currentFileName = '';
+      let hasBom = false;
+      let parsedItems = [];
+      let shiftOffsetMs = 0;
+
+      // DOM 元素引用
+      const dropZone = document.getElementById('dropZone');
+      const fileInput = document.getElementById('fileInput');
+      const togglePasteBtn = document.getElementById('togglePasteBtn');
+      const pasteBox = document.getElementById('pasteBox');
+      const pasteTextarea = document.getElementById('pasteTextarea');
+      const fileInfoBar = document.getElementById('fileInfoBar');
+      const fileNameDisplay = document.getElementById('fileNameDisplay');
+      const fileCountDisplay = document.getElementById('fileCountDisplay');
+      const bomBadge = document.getElementById('bomBadge');
+      const clearFileBtn = document.getElementById('clearFileBtn');
+      const shiftAmountInput = document.getElementById('shiftAmountInput');
+      const resetShiftBtn = document.getElementById('resetShiftBtn');
+      const warnBanner = document.getElementById('warnBanner');
+      const warnMessage = document.getElementById('warnMessage');
+      const downloadBtn = document.getElementById('downloadBtn');
+      const statusSummary = document.getElementById('statusSummary');
+      const previewSection = document.getElementById('previewSection');
+      const previewCountNote = document.getElementById('previewCountNote');
+      const previewTbody = document.getElementById('previewTbody');
+
+      /**
+       * 时间码字符串解析为毫秒数
+       * 兼容逗号与点号：00:00:01,000 或 00:00:01.000
+       */
+      function timeToMs(t) {
+        if (!t) return 0;
+        const parts = t.trim().split(/[:,.]/);
+        if (parts.length < 4) return 0;
+        const h = parseInt(parts[0], 10) || 0;
+        const m = parseInt(parts[1], 10) || 0;
+        const s = parseInt(parts[2], 10) || 0;
+        const msStr = (parts[3] || '0').padEnd(3, '0').slice(0, 3);
+        const ms = parseInt(msStr, 10) || 0;
+        return h * 3600000 + m * 60000 + s * 1000 + ms;
+      }
+
+      /**
+       * 毫秒数转标准 SRT 时间格式 HH:MM:SS,mmm
+       * 保证非负（小于 0 钳制为 00:00:00,000）
+       */
+      function msToTime(ms) {
+        if (ms < 0) ms = 0;
+        const h = Math.floor(ms / 3600000);
+        ms %= 3600000;
+        const m = Math.floor(ms / 60000);
+        ms %= 60000;
+        const s = Math.floor(ms / 1000);
+        const remMs = ms % 1000;
+        return String(h).padStart(2, '0') + ':' +
+               String(m).padStart(2, '0') + ':' +
+               String(s).padStart(2, '0') + ',' +
+               String(remMs).padStart(3, '0');
+      }
+
+      /**
+       * 解析 SRT 格式文本为结构化数据数组
+       */
+      function parseSRT(text) {
+        if (!text) return [];
+        // 去除开头 BOM，并统一换行为 \n
+        const cleanText = text.replace(/^\uFEFF/, '').replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+        const rawBlocks = cleanText.split(/\n\n+/);
+        const items = [];
+
+        for (let i = 0; i < rawBlocks.length; i++) {
+          const block = rawBlocks[i].trim();
+          if (!block) continue;
+          const lines = block.split('\n');
+
+          // 寻找带有 --> 的时间行
+          let timeLineIdx = -1;
+          for (let j = 0; j < lines.length; j++) {
+            if (lines[j].includes('-->')) {
+              timeLineIdx = j;
+              break;
+            }
+          }
+          if (timeLineIdx === -1) continue;
+
+          const timeMatch = lines[timeLineIdx].match(/(\d{1,2}:\d{2}:\d{2}[,.]\d{1,3})\s*-->\s*(\d{1,2}:\d{2}:\d{2}[,.]\d{1,3})(.*)/);
+          if (!timeMatch) continue;
+
+          const id = lines.slice(0, timeLineIdx).join(' ').trim() || String(items.length + 1);
+          const startStr = timeMatch[1];
+          const endStr = timeMatch[2];
+          const coordinates = timeMatch[3] || '';
+          const textLines = lines.slice(timeLineIdx + 1);
+
+          items.push({
+            id,
+            startStr,
+            endStr,
+            coordinates,
+            startMs: timeToMs(startStr),
+            endMs: timeToMs(endStr),
+            text: textLines.join('\n')
+          });
+        }
+        return items;
+      }
+
+      /**
+       * 根据当前 offset 计算偏移后的时间与警告信息
+       */
+      function calculateShift(items, shiftMs) {
+        let clampedCount = 0;
+        let invalidCount = 0;
+        const warnings = [];
+
+        const processed = items.map((item, index) => {
+          let newStart = item.startMs + shiftMs;
+          let newEnd = item.endMs + shiftMs;
+          let clamped = false;
+
+          // 负偏移钳制：小于 0 的钳制为 0
+          if (newStart < 0) {
+            newStart = 0;
+            clamped = true;
+          }
+          if (newEnd < 0) {
+            newEnd = 0;
+            clamped = true;
+          }
+          if (clamped) clampedCount++;
+
+          let isInvalid = false;
+          let warnMsg = '';
+
+          // 校验：end < start
+          if (newEnd < newStart) {
+            isInvalid = true;
+            invalidCount++;
+            warnMsg = '结束时间早于开始时间 (' + msToTime(newStart) + ' --> ' + msToTime(newEnd) + ')';
+            warnings.push({ index: index + 1, id: item.id, message: warnMsg });
+          } else if (clamped && newStart === 0 && newEnd === 0 && (item.startMs > 0 || item.endMs > 0)) {
+            warnMsg = '时间轴完全落于 00:00:00 前，已钳制为起点';
+          }
+
+          return {
+            ...item,
+            newStartMs: newStart,
+            newEndMs: newEnd,
+            newStartStr: msToTime(newStart),
+            newEndStr: msToTime(newEnd),
+            clamped,
+            isInvalid,
+            warnMsg
+          };
+        });
+
+        return { processed, clampedCount, invalidCount, warnings };
+      }
+
+      /**
+       * 更新 UI：告警横幅、预览表、状态文本、下载按钮
+       */
+      function updateUI() {
+        if (parsedItems.length === 0) {
+          fileInfoBar.classList.remove('show');
+          previewSection.classList.remove('show');
+          warnBanner.classList.remove('show');
+          downloadBtn.disabled = true;
+          statusSummary.textContent = '请先选择或粘贴 SRT 字幕';
+          return;
+        }
+
+        // 文件信息条
+        fileInfoBar.classList.add('show');
+        fileNameDisplay.textContent = '📄 ' + (currentFileName || '已粘贴字幕');
+        fileCountDisplay.textContent = '(' + parsedItems.length + ' 条字幕)';
+        bomBadge.style.display = hasBom ? 'inline-block' : 'none';
+
+        // 偏移计算
+        const { processed, clampedCount, invalidCount, warnings } = calculateShift(parsedItems, shiftOffsetMs);
+
+        // 警告提示
+        const warnMsgs = [];
+        if (invalidCount > 0) {
+          const detail = warnings.slice(0, 3).map(w => '第 ' + w.index + ' 条 (序号 ' + w.id + '): ' + w.message).join('；');
+          warnMsgs.push('<strong>严重问题：</strong> 检测到 ' + invalidCount + ' 条字幕的结束时间早于开始时间！' + detail + (warnings.length > 3 ? ' 等' : ''));
+        }
+        if (clampedCount > 0) {
+          warnMsgs.push('<strong>时间钳制提示：</strong> 共有 ' + clampedCount + ' 处时间早于 00:00:00,000，已自动钳制到零点。');
+        }
+
+        if (warnMsgs.length > 0) {
+          warnBanner.classList.add('show');
+          warnMessage.innerHTML = warnMsgs.join('<br>');
+        } else {
+          warnBanner.classList.remove('show');
+          warnMessage.innerHTML = '';
+        }
+
+        // 预览表格（前 10 条）
+        const previewItems = processed.slice(0, 10);
+        previewTbody.innerHTML = previewItems.map((item, idx) => {
+          let rowClass = '';
+          if (item.isInvalid) rowClass = 'has-error';
+          else if (item.clamped) rowClass = 'has-warn';
+
+          let clampedHtml = item.clamped ? '<span class="clamped-badge">已钳制</span>' : '';
+          let invalidHtml = item.isInvalid ? '<span class="invalid-badge">时间异常</span>' : '';
+
+          // 转义 HTML 字符
+          const escapeHtml = str => String(str).replace(/[&<>"']/g, m => ({
+            '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+          }[m]));
+
+          return '<tr class="' + rowClass + '">' +
+            '<td>' + escapeHtml(item.id || (idx + 1)) + '</td>' +
+            '<td class="time-orig">' + escapeHtml(item.startStr + ' --> ' + item.endStr) + '</td>' +
+            '<td class="time-shifted">' + escapeHtml(item.newStartStr + ' --> ' + item.newEndStr) + clampedHtml + invalidHtml + '</td>' +
+            '<td class="sub-text">' + escapeHtml(item.text).replace(/\n/g, '<br>') + '</td>' +
+            '</tr>';
+        }).join('');
+
+        previewSection.classList.add('show');
+        previewCountNote.textContent = '共 ' + parsedItems.length + ' 条字幕' + (parsedItems.length > 10 ? '，已显示前 10 条' : '，已全部显示');
+
+        // 按钮与状态
+        downloadBtn.disabled = false;
+        const signStr = shiftOffsetMs > 0 ? '+' + shiftOffsetMs : String(shiftOffsetMs);
+        statusSummary.textContent = '准备就绪：当前偏移 ' + signStr + 'ms，可下载文件';
+      }
+
+      /**
+       * 处理选择或拖拽的文件
+       */
+      function handleFile(file) {
+        if (!file) return;
+        currentFileName = file.name;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const buffer = e.target.result;
+          const bytes = new Uint8Array(buffer);
+          // 检测 UTF-8 BOM: EF BB BF
+          hasBom = (bytes.length >= 3 && bytes[0] === 0xEF && bytes[1] === 0xBB && bytes[2] === 0xBF);
+
+          // 解码文本
+          const decoder = new TextDecoder('utf-8');
+          const text = decoder.decode(bytes);
+
+          parsedItems = parseSRT(text);
+          if (parsedItems.length === 0) {
+            alert('未能从该文件中解析出有效 SRT 字幕，请确认文件格式。');
+            return;
+          }
+
+          updateUI();
+        };
+        reader.readAsArrayBuffer(file);
+      }
+
+      /**
+       * 从粘贴文本框解析字幕
+       */
+      function handlePasteInput() {
+        const text = pasteTextarea.value.trim();
+        if (!text) {
+          if (!currentFileName) {
+            parsedItems = [];
+            updateUI();
+          }
+          return;
+        }
+        currentFileName = 'pasted_subtitle.srt';
+        hasBom = text.charCodeAt(0) === 0xFEFF;
+        parsedItems = parseSRT(text);
+        updateUI();
+      }
+
+      /**
+       * 构建并下载导出的 SRT 文件
+       */
+      function downloadShiftedSRT() {
+        if (parsedItems.length === 0) return;
+
+        const { processed } = calculateShift(parsedItems, shiftOffsetMs);
+
+        // 生成规范 SRT 字符串，严格使用 CRLF (\r\n) 换行
+        const blocks = processed.map((item, index) => {
+          const id = item.id || String(index + 1);
+          const timeLine = item.newStartStr + ' --> ' + item.newEndStr + (item.coordinates ? item.coordinates : '');
+          const text = (item.text || '').replace(/\r\n/g, '\n').replace(/\r/g, '\n').replace(/\n/g, '\r\n');
+          return id + '\r\n' + timeLine + '\r\n' + text;
+        });
+
+        const srtContent = blocks.join('\r\n\r\n') + '\r\n';
+
+        // 构造文件名：原名_shift+2500ms.srt
+        const baseName = currentFileName || 'subtitle.srt';
+        const dotIdx = baseName.lastIndexOf('.');
+        const nameWithoutExt = dotIdx !== -1 ? baseName.slice(0, dotIdx) : baseName;
+        const ext = dotIdx !== -1 ? baseName.slice(dotIdx) : '.srt';
+        const sign = shiftOffsetMs >= 0 ? '+' : '';
+        const outputFileName = nameWithoutExt + '_shift' + sign + shiftOffsetMs + 'ms' + ext;
+
+        // 处理 BOM：若原始文件含 BOM，则写回 0xEF 0xBB 0xBF
+        let blobParts = [];
+        if (hasBom) {
+          const bomBytes = new Uint8Array([0xEF, 0xBB, 0xBF]);
+          blobParts.push(bomBytes);
+        }
+        blobParts.push(srtContent);
+
+        const blob = new Blob(blobParts, { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = outputFileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(url), 5000);
+      }
+
+      /* ===== 事件绑定 ===== */
+
+      // 拖放区域事件
+      dropZone.addEventListener('click', () => fileInput.click());
+      dropZone.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          fileInput.click();
+        }
+      });
+
+      ['dragenter', 'dragover'].forEach(name => {
+        dropZone.addEventListener(name, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          dropZone.classList.add('dragover');
+        });
+      });
+
+      ['dragleave', 'drop'].forEach(name => {
+        dropZone.addEventListener(name, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          dropZone.classList.remove('dragover');
+        });
+      });
+
+      dropZone.addEventListener('drop', (e) => {
+        const files = e.dataTransfer.files;
+        if (files && files.length > 0) {
+          handleFile(files[0]);
+        }
+      });
+
+      fileInput.addEventListener('change', (e) => {
+        if (e.target.files && e.target.files.length > 0) {
+          handleFile(e.target.files[0]);
+        }
+      });
+
+      // 粘贴区域显隐切换
+      togglePasteBtn.addEventListener('click', () => {
+        const isShown = pasteBox.classList.toggle('show');
+        togglePasteBtn.textContent = isShown ? '收起粘贴区域' : '✏️ 手动粘贴 SRT 文本';
+        if (isShown) pasteTextarea.focus();
+      });
+
+      pasteTextarea.addEventListener('input', handlePasteInput);
+
+      // 清除文件
+      clearFileBtn.addEventListener('click', () => {
+        parsedItems = [];
+        currentFileName = '';
+        hasBom = false;
+        fileInput.value = '';
+        pasteTextarea.value = '';
+        updateUI();
+      });
+
+      // 偏移输入框变动
+      shiftAmountInput.addEventListener('input', () => {
+        const val = parseInt(shiftAmountInput.value, 10);
+        shiftOffsetMs = isNaN(val) ? 0 : val;
+        updateUI();
+      });
+
+      // 重置偏移
+      resetShiftBtn.addEventListener('click', () => {
+        shiftOffsetMs = 0;
+        shiftAmountInput.value = '0';
+        updateUI();
+      });
+
+      // 快捷按钮绑定
+      document.querySelectorAll('.btn-preset').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const delta = parseInt(btn.dataset.shift, 10) || 0;
+          shiftOffsetMs += delta;
+          shiftAmountInput.value = shiftOffsetMs;
+          updateUI();
+        });
+      });
+
+      // 下载按钮
+      downloadBtn.addEventListener('click', downloadShiftedSRT);
+
+    })();
   </script>
 
 </body>
