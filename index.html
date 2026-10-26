@@ -475,6 +475,15 @@
       font-weight: 600;
     }
 
+    .badge-gbk {
+      background: #FEF3C7;
+      color: #B45309;
+      font-size: 11px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+
     .btn-clear {
       background: none;
       border: none;
@@ -723,6 +732,15 @@
 
     .preview-table tr.has-error {
       background: #FEF2F2;
+    }
+
+    .preview-table tr.separator-row td {
+      background: #F1F5F9;
+      color: var(--text-muted);
+      text-align: center;
+      padding: 8px 12px;
+      font-style: italic;
+      font-size: 12px;
     }
 
     .time-orig {
@@ -992,6 +1010,7 @@
               <span id="fileCountDisplay" style="color: #64748B; font-size: 12px;">(0 条字幕)</span>
               <div class="file-info-tags">
                 <span class="badge-bom" id="bomBadge" style="display: none;">UTF-8 BOM</span>
+                <span class="badge-gbk" id="gbkBadge" style="display: none;">GBK 解码</span>
               </div>
             </div>
             <button type="button" class="btn-clear" id="clearFileBtn" title="清除重新选择">
@@ -1267,6 +1286,7 @@
       // 状态变量
       let currentFileName = '';
       let hasBom = false;
+      let isGbk = false;
       let parsedItems = [];
       let shiftOffsetMs = 0;
 
@@ -1280,6 +1300,7 @@
       const fileNameDisplay = document.getElementById('fileNameDisplay');
       const fileCountDisplay = document.getElementById('fileCountDisplay');
       const bomBadge = document.getElementById('bomBadge');
+      const gbkBadge = document.getElementById('gbkBadge');
       const clearFileBtn = document.getElementById('clearFileBtn');
       const shiftAmountInput = document.getElementById('shiftAmountInput');
       const resetShiftBtn = document.getElementById('resetShiftBtn');
@@ -1404,7 +1425,12 @@
             isInvalid = true;
             invalidCount++;
             warnMsg = '结束时间早于开始时间 (' + msToTime(newStart) + ' --> ' + msToTime(newEnd) + ')';
-            warnings.push({ index: index + 1, id: item.id, message: warnMsg });
+            warnings.push({
+              index: index + 1,
+              id: item.id,
+              newTimeCode: msToTime(newStart) + ' --> ' + msToTime(newEnd),
+              message: warnMsg
+            });
           } else if (clamped && newStart === 0 && newEnd === 0 && (item.startMs > 0 || item.endMs > 0)) {
             warnMsg = '时间轴完全落于 00:00:00 前，已钳制为起点';
           }
@@ -1422,6 +1448,27 @@
         });
 
         return { processed, clampedCount, invalidCount, warnings };
+      }
+
+      // 转义 HTML 字符
+      const escapeHtml = str => String(str).replace(/[&<>"']/g, m => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      }[m]));
+
+      function renderTableRow(item, idx) {
+        let rowClass = '';
+        if (item.isInvalid) rowClass = 'has-error';
+        else if (item.clamped) rowClass = 'has-warn';
+
+        let clampedHtml = item.clamped ? '<span class="clamped-badge">已钳制</span>' : '';
+        let invalidHtml = item.isInvalid ? '<span class="invalid-badge">时间异常</span>' : '';
+
+        return '<tr class="' + rowClass + '">' +
+          '<td>' + escapeHtml(item.id || (idx + 1)) + '</td>' +
+          '<td class="time-orig">' + escapeHtml(item.startStr + ' --> ' + item.endStr) + '</td>' +
+          '<td class="time-shifted">' + escapeHtml(item.newStartStr + ' --> ' + item.newEndStr) + clampedHtml + invalidHtml + '</td>' +
+          '<td class="sub-text">' + escapeHtml(item.text).replace(/\n/g, '<br>') + '</td>' +
+          '</tr>';
       }
 
       /**
@@ -1442,6 +1489,7 @@
         fileNameDisplay.textContent = '📄 ' + (currentFileName || '已粘贴字幕');
         fileCountDisplay.textContent = '(' + parsedItems.length + ' 条字幕)';
         bomBadge.style.display = hasBom ? 'inline-block' : 'none';
+        gbkBadge.style.display = isGbk ? 'inline-block' : 'none';
 
         // 偏移计算
         const { processed, clampedCount, invalidCount, warnings } = calculateShift(parsedItems, shiftOffsetMs);
@@ -1464,31 +1512,28 @@
           warnMessage.innerHTML = '';
         }
 
-        // 预览表格（前 10 条）
-        const previewItems = processed.slice(0, 10);
-        previewTbody.innerHTML = previewItems.map((item, idx) => {
-          let rowClass = '';
-          if (item.isInvalid) rowClass = 'has-error';
-          else if (item.clamped) rowClass = 'has-warn';
+        // 预览表格：总数 20 条以内全部显示；超过 20 条显示前 10 条 + 分隔行 + 后 10 条
+        const total = processed.length;
+        let tableRowsHtml = '';
 
-          let clampedHtml = item.clamped ? '<span class="clamped-badge">已钳制</span>' : '';
-          let invalidHtml = item.isInvalid ? '<span class="invalid-badge">时间异常</span>' : '';
+        if (total <= 20) {
+          tableRowsHtml = processed.map((item, idx) => renderTableRow(item, idx)).join('');
+          previewCountNote.textContent = '共 ' + total + ' 条字幕，已全部显示';
+        } else {
+          const omitted = total - 20;
+          const first10 = processed.slice(0, 10);
+          const last10 = processed.slice(-10);
 
-          // 转义 HTML 字符
-          const escapeHtml = str => String(str).replace(/[&<>"']/g, m => ({
-            '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-          }[m]));
+          const firstRows = first10.map((item, idx) => renderTableRow(item, idx)).join('');
+          const separatorRow = '<tr class="separator-row"><td colspan="4">……中间 ' + omitted + ' 条已省略……</td></tr>';
+          const lastRows = last10.map((item, idx) => renderTableRow(item, total - 10 + idx)).join('');
 
-          return '<tr class="' + rowClass + '">' +
-            '<td>' + escapeHtml(item.id || (idx + 1)) + '</td>' +
-            '<td class="time-orig">' + escapeHtml(item.startStr + ' --> ' + item.endStr) + '</td>' +
-            '<td class="time-shifted">' + escapeHtml(item.newStartStr + ' --> ' + item.newEndStr) + clampedHtml + invalidHtml + '</td>' +
-            '<td class="sub-text">' + escapeHtml(item.text).replace(/\n/g, '<br>') + '</td>' +
-            '</tr>';
-        }).join('');
+          tableRowsHtml = firstRows + separatorRow + lastRows;
+          previewCountNote.textContent = '共 ' + total + ' 条字幕，已显示前 10 条和后 10 条，中间 ' + omitted + ' 条已省略';
+        }
 
+        previewTbody.innerHTML = tableRowsHtml;
         previewSection.classList.add('show');
-        previewCountNote.textContent = '共 ' + parsedItems.length + ' 条字幕' + (parsedItems.length > 10 ? '，已显示前 10 条' : '，已全部显示');
 
         // 按钮与状态
         downloadBtn.disabled = false;
@@ -1498,6 +1543,7 @@
 
       /**
        * 处理选择或拖拽的文件
+       * 先查 UTF-8 BOM；无 BOM 用严格 UTF-8 (fatal:true)，失败再用 GBK (fatal:true)
        */
       function handleFile(file) {
         if (!file) return;
@@ -1507,16 +1553,47 @@
         reader.onload = function(e) {
           const buffer = e.target.result;
           const bytes = new Uint8Array(buffer);
-          // 检测 UTF-8 BOM: EF BB BF
-          hasBom = (bytes.length >= 3 && bytes[0] === 0xEF && bytes[1] === 0xBB && bytes[2] === 0xBF);
 
-          // 解码文本
-          const decoder = new TextDecoder('utf-8');
-          const text = decoder.decode(bytes);
+          // 1. 判断 UTF-8 BOM (0xEF, 0xBB, 0xBF)
+          hasBom = (bytes.length >= 3 && bytes[0] === 0xEF && bytes[1] === 0xBB && bytes[2] === 0xBF);
+          isGbk = false;
+          let text = '';
+
+          if (hasBom) {
+            try {
+              const decoder = new TextDecoder('utf-8');
+              text = decoder.decode(bytes);
+            } catch (err) {
+              alert('UTF-8 BOM 文件解码失败：' + err.message);
+              return;
+            }
+          } else {
+            // 2. 无 BOM：先用严格 UTF-8 解码
+            let utf8Success = false;
+            try {
+              const decoderUtf8 = new TextDecoder('utf-8', { fatal: true });
+              text = decoderUtf8.decode(bytes);
+              utf8Success = true;
+            } catch (utfErr) {
+              // UTF-8 解码失败，尝试 GBK
+              utf8Success = false;
+            }
+
+            if (!utf8Success) {
+              try {
+                const decoderGbk = new TextDecoder('gbk', { fatal: true });
+                text = decoderGbk.decode(bytes);
+                isGbk = true;
+              } catch (gbkErr) {
+                alert('无法识别文件编码：已尝试 UTF-8 与 GBK 解码均失败，请检查文件是否为有效文本！');
+                return;
+              }
+            }
+          }
 
           parsedItems = parseSRT(text);
           if (parsedItems.length === 0) {
-            alert('未能从该文件中解析出有效 SRT 字幕，请确认文件格式。');
+            alert('未能从该文件中解析出有效 SRT 字幕，请确认文件内容。');
             return;
           }
 
@@ -1533,12 +1610,15 @@
         if (!text) {
           if (!currentFileName) {
             parsedItems = [];
+            isGbk = false;
+            hasBom = false;
             updateUI();
           }
           return;
         }
         currentFileName = 'pasted_subtitle.srt';
         hasBom = text.charCodeAt(0) === 0xFEFF;
+        isGbk = false;
         parsedItems = parseSRT(text);
         updateUI();
       }
@@ -1549,7 +1629,23 @@
       function downloadShiftedSRT() {
         if (parsedItems.length === 0) return;
 
-        const { processed } = calculateShift(parsedItems, shiftOffsetMs);
+        const { processed, invalidCount, warnings } = calculateShift(parsedItems, shiftOffsetMs);
+
+        // 异常时间码确认提示
+        if (invalidCount > 0) {
+          const detailList = warnings.slice(0, 3).map((w, i) =>
+            '  ' + (i + 1) + '. 序号 ' + w.id + '：' + w.newTimeCode
+          ).join('\n');
+          const confirmMsg = '【异常时间码警告】\n\n' +
+            '当前偏移计算后，检测到共有 ' + invalidCount + ' 条字幕的结束时间早于开始时间！\n' +
+            '前 ' + Math.min(3, warnings.length) + ' 条异常字幕如下：\n' +
+            detailList + (warnings.length > 3 ? '\n  ……等共 ' + invalidCount + ' 条' : '') + '\n\n' +
+            '是否仍要继续下载？点击“确定”仍要下载，点击“取消”中止下载。';
+
+          if (!window.confirm(confirmMsg)) {
+            return; // 用户点击取消，不下载
+          }
+        }
 
         // 生成规范 SRT 字符串，严格使用 CRLF (\r\n) 换行
         const blocks = processed.map((item, index) => {
@@ -1569,7 +1665,7 @@
         const sign = shiftOffsetMs >= 0 ? '+' : '';
         const outputFileName = nameWithoutExt + '_shift' + sign + shiftOffsetMs + 'ms' + ext;
 
-        // 处理 BOM：若原始文件含 BOM，则写回 0xEF 0xBB 0xBF
+        // 处理 BOM：仅当原文件含 UTF-8 BOM 时写回 BOM；GBK 来源的文件导出为不带 BOM 的 UTF-8
         let blobParts = [];
         if (hasBom) {
           const bomBytes = new Uint8Array([0xEF, 0xBB, 0xBF]);
@@ -1642,6 +1738,7 @@
         parsedItems = [];
         currentFileName = '';
         hasBom = false;
+        isGbk = false;
         fileInput.value = '';
         pasteTextarea.value = '';
         updateUI();
