@@ -341,11 +341,92 @@
     }
 
     /* ===== Shift Tool Styles ===== */
-    .shift-container, .convert-container {
+    .shift-container, .convert-container, .merge-container {
       padding: 24px 32px 32px;
       display: flex;
       flex-direction: column;
       gap: 24px;
+    }
+
+    /* Dual Upload Columns for Bilingual Merge */
+    .dual-upload-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .upload-card-col {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      padding: 16px;
+    }
+
+    .upload-col-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .upload-col-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-heading);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .order-selector-group {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .radio-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      color: var(--text);
+      user-select: none;
+    }
+
+    .radio-label input[type="radio"] {
+      cursor: pointer;
+      accent-color: var(--brand);
+    }
+
+    .bilingual-sub-line {
+      display: block;
+      line-height: 1.45;
+    }
+
+    .bilingual-sub-line.primary-lang {
+      color: #1E40AF;
+      font-weight: 600;
+    }
+
+    .bilingual-sub-line.secondary-lang {
+      color: #475569;
+    }
+
+    .bilingual-sub-line + .bilingual-sub-line {
+      margin-top: 4px;
+      padding-top: 4px;
+      border-top: 1px dashed #E2E8F0;
+    }
+
+    @media (max-width: 640px) {
+      .dual-upload-grid {
+        grid-template-columns: 1fr;
+      }
     }
 
     /* Upload & Input Zone */
@@ -1237,68 +1318,156 @@
           <div class="tool-emoji green">🌐</div>
           <div>
             <h2>双语合并</h2>
-            <p>将两份单语字幕合并成一份上下双语字幕，完美适配中英、中日等语言学习场景。</p>
+            <p>将两份单语字幕（SRT 或 VTT）合并为上下双语字幕。以主语言时间轴为基准，智能重叠对齐，无重叠内容不丢失，同一条内容去重后只保留一行，纯浏览器本地完成。</p>
           </div>
         </div>
 
-        <div class="coming-banner">
-          <span class="banner-icon">🚧</span>
-          <div>
-            <strong>功能即将上线</strong> — 本工具正在开发中，敬请期待！
-          </div>
-        </div>
+        <div class="merge-container">
+          <!-- 左右 / 上下双输入卡片 -->
+          <div class="dual-upload-grid">
+            <!-- 主语言输入列 -->
+            <div class="upload-card-col">
+              <div class="upload-col-header">
+                <span class="upload-col-title">📘 主语言字幕 (时间基准)</span>
+                <button type="button" class="btn-link" id="togglePasteMainBtn">✏️ 粘贴文本</button>
+              </div>
 
-        <div class="feature-section">
-          <h3>计划功能</h3>
-          <ul class="feature-list">
-            <li>
-              <span class="feat-icon">📄📄</span>
-              <span>
-                <span class="feat-label">双文件输入</span>
-                <span class="feat-desc">分别上传主语言和副语言字幕</span>
-              </span>
-            </li>
-            <li>
-              <span class="feat-icon">🔀</span>
-              <span>
-                <span class="feat-label">顺序可调</span>
-                <span class="feat-desc">自定义哪种语言显示在上方</span>
-              </span>
-            </li>
-            <li>
-              <span class="feat-icon">⚖️</span>
-              <span>
-                <span class="feat-label">时间轴对齐</span>
-                <span class="feat-desc">智能匹配两份字幕的时间区间</span>
-              </span>
-            </li>
-            <li>
-              <span class="feat-icon">✂️</span>
-              <span>
-                <span class="feat-label">去重过滤</span>
-                <span class="feat-desc">自动识别并去除重复行内容</span>
-              </span>
-            </li>
-          </ul>
-        </div>
+              <div
+                id="dropZoneMain"
+                class="drop-zone"
+                tabindex="0"
+                role="button"
+                aria-label="点击或拖拽上传主语言字幕"
+                style="padding: 20px 14px;"
+              >
+                <input type="file" id="fileInputMain" class="file-input-hidden" accept=".srt,.vtt,text/vtt" />
+                <div class="drop-icon" style="font-size: 24px; margin-bottom: 4px;">📂</div>
+                <div class="drop-title" style="font-size: 13px;">点击或拖拽主语言文件 (.srt / .vtt)</div>
+                <div class="drop-hint" style="font-size: 11px;">合并输出将以该字幕的时间轴为主要基准</div>
+              </div>
 
-        <!-- 双语预览示例 -->
-        <div class="merge-preview">
-          <div class="merge-preview-row">
-            <div class="merge-preview-label">主语言</div>
-            <div class="merge-preview-content lang-a">这是一段示例字幕内容。</div>
-          </div>
-          <div class="merge-preview-row">
-            <div class="merge-preview-label">副语言</div>
-            <div class="merge-preview-content lang-b">This is a sample subtitle line.</div>
-          </div>
-          <div class="merge-preview-row" style="background: #F8FAFC;">
-            <div class="merge-preview-label" style="color: #10B981; font-weight:700;">合并后</div>
-            <div class="merge-preview-content" style="display:flex; flex-direction:column; gap:2px;">
-              <span style="color:#1E40AF; font-weight:500;">这是一段示例字幕内容。</span>
-              <span style="color:#64748B; font-size:12px;">This is a sample subtitle line.</span>
+              <div class="paste-box" id="pasteBoxMain">
+                <textarea
+                  id="pasteTextareaMain"
+                  class="paste-textarea"
+                  style="height: 90px;"
+                  placeholder="在此粘贴主语言字幕 (SRT / VTT 均可)"
+                  spellcheck="false"
+                ></textarea>
+              </div>
+
+              <div class="file-info-bar" id="fileInfoBarMain">
+                <div class="file-info-left">
+                  <span id="fileNameDisplayMain">📄 main.srt</span>
+                  <span id="fileCountDisplayMain" style="color: #64748B; font-size: 12px;">(0 条)</span>
+                  <div class="file-info-tags">
+                    <span class="badge-bom" id="bomBadgeMain" style="display: none;">UTF-8 BOM</span>
+                    <span class="badge-gbk" id="gbkBadgeMain" style="display: none;">GBK 解码</span>
+                  </div>
+                </div>
+                <button type="button" class="btn-clear" id="clearFileMainBtn" title="清除">✕</button>
+              </div>
+            </div>
+
+            <!-- 副语言输入列 -->
+            <div class="upload-card-col">
+              <div class="upload-col-header">
+                <span class="upload-col-title">📗 副语言字幕</span>
+                <button type="button" class="btn-link" id="togglePasteSubBtn">✏️ 粘贴文本</button>
+              </div>
+
+              <div
+                id="dropZoneSub"
+                class="drop-zone"
+                tabindex="0"
+                role="button"
+                aria-label="点击或拖拽上传副语言字幕"
+                style="padding: 20px 14px;"
+              >
+                <input type="file" id="fileInputSub" class="file-input-hidden" accept=".srt,.vtt,text/vtt" />
+                <div class="drop-icon" style="font-size: 24px; margin-bottom: 4px;">📂</div>
+                <div class="drop-title" style="font-size: 13px;">点击或拖拽副语言文件 (.srt / .vtt)</div>
+                <div class="drop-hint" style="font-size: 11px;">与主语言有时间重叠的文本将合并为双语</div>
+              </div>
+
+              <div class="paste-box" id="pasteBoxSub">
+                <textarea
+                  id="pasteTextareaSub"
+                  class="paste-textarea"
+                  style="height: 90px;"
+                  placeholder="在此粘贴副语言字幕 (SRT / VTT 均可)"
+                  spellcheck="false"
+                ></textarea>
+              </div>
+
+              <div class="file-info-bar" id="fileInfoBarSub">
+                <div class="file-info-left">
+                  <span id="fileNameDisplaySub">📄 sub.srt</span>
+                  <span id="fileCountDisplaySub" style="color: #64748B; font-size: 12px;">(0 条)</span>
+                  <div class="file-info-tags">
+                    <span class="badge-bom" id="bomBadgeSub" style="display: none;">UTF-8 BOM</span>
+                    <span class="badge-gbk" id="gbkBadgeSub" style="display: none;">GBK 解码</span>
+                  </div>
+                </div>
+                <button type="button" class="btn-clear" id="clearFileSubBtn" title="清除">✕</button>
+              </div>
             </div>
           </div>
+
+          <!-- 合并设置卡片：显示顺序切换与规则提示 -->
+          <div class="control-card">
+            <div class="control-row">
+              <span class="control-label">显示顺序：</span>
+              <div class="order-selector-group">
+                <label class="radio-label">
+                  <input type="radio" name="mergeOrder" value="primaryFirst" checked id="orderPrimaryFirst" />
+                  <span><strong>主语言在上</strong>，副语言在下 (默认推荐)</span>
+                </label>
+                <label class="radio-label">
+                  <input type="radio" name="mergeOrder" value="secondaryFirst" id="orderSecondaryFirst" />
+                  <span><strong>副语言在上</strong>，主语言在下</span>
+                </label>
+              </div>
+            </div>
+            <div style="font-size: 13px; color: var(--text-muted); line-height: 1.5;">
+              • <strong>对齐规则</strong>：以主语言时间轴为基准，将时间有重叠的副语言合并显示在同一条字幕中。<br>
+              • <strong>无遗漏保障</strong>：若副语言某些条目在主语言中完全无重叠，将按时间顺序单独插入，绝不丢失任何内容。<br>
+              • <strong>智能去重</strong>：同一条字幕中若主副语言文本去空格后完全相同，则只保留一行。
+            </div>
+          </div>
+
+          <!-- 操作栏：下载按钮与状态统计 -->
+          <div class="action-bar">
+            <button type="button" id="downloadMergeBtn" class="btn-primary" disabled>
+              <span>💾</span>
+              <span>下载双语 SRT 字幕</span>
+            </button>
+            <span class="status-summary" id="statusSummaryMerge">请先上传或粘贴主语言与副语言字幕</span>
+          </div>
+
+          <!-- 实时预览区 -->
+          <div class="preview-section" id="previewSectionMerge">
+            <div class="preview-header">
+              <span>合并结果预览（展示前 10 条）</span>
+              <span id="previewCountNoteMerge" style="font-size: 12px; color: var(--text-muted);">共 0 条</span>
+            </div>
+            <div class="preview-table-wrapper">
+              <table class="preview-table">
+                <thead>
+                  <tr>
+                    <th style="width: 50px;">#</th>
+                    <th style="width: 220px;">合并后时间轴</th>
+                    <th>双语字幕正文</th>
+                    <th style="width: 90px;">来源</th>
+                  </tr>
+                </thead>
+                <tbody id="previewTbodyMerge">
+                  <!-- 动态插入行 -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
         </div>
 
       </div>
@@ -2288,6 +2457,641 @@
       });
 
       downloadBtn.addEventListener('click', downloadConvertedFile);
+
+    })();
+
+    /* ============================================================
+     * 双语合并工具 (纯本地实现，零网络请求)
+     * ============================================================ */
+    (function initMergeTool() {
+      // 状态变量
+      let mainData = {
+        fileName: '',
+        hasBom: false,
+        isGbk: false,
+        items: []
+      };
+
+      let subData = {
+        fileName: '',
+        hasBom: false,
+        isGbk: false,
+        items: []
+      };
+
+      let primaryOnTop = true;
+      let mergedResults = [];
+
+      // DOM 元素引用 - 主语言
+      const dropZoneMain = document.getElementById('dropZoneMain');
+      const fileInputMain = document.getElementById('fileInputMain');
+      const togglePasteMainBtn = document.getElementById('togglePasteMainBtn');
+      const pasteBoxMain = document.getElementById('pasteBoxMain');
+      const pasteTextareaMain = document.getElementById('pasteTextareaMain');
+      const fileInfoBarMain = document.getElementById('fileInfoBarMain');
+      const fileNameDisplayMain = document.getElementById('fileNameDisplayMain');
+      const fileCountDisplayMain = document.getElementById('fileCountDisplayMain');
+      const bomBadgeMain = document.getElementById('bomBadgeMain');
+      const gbkBadgeMain = document.getElementById('gbkBadgeMain');
+      const clearFileMainBtn = document.getElementById('clearFileMainBtn');
+
+      // DOM 元素引用 - 副语言
+      const dropZoneSub = document.getElementById('dropZoneSub');
+      const fileInputSub = document.getElementById('fileInputSub');
+      const togglePasteSubBtn = document.getElementById('togglePasteSubBtn');
+      const pasteBoxSub = document.getElementById('pasteBoxSub');
+      const pasteTextareaSub = document.getElementById('pasteTextareaSub');
+      const fileInfoBarSub = document.getElementById('fileInfoBarSub');
+      const fileNameDisplaySub = document.getElementById('fileNameDisplaySub');
+      const fileCountDisplaySub = document.getElementById('fileCountDisplaySub');
+      const bomBadgeSub = document.getElementById('bomBadgeSub');
+      const gbkBadgeSub = document.getElementById('gbkBadgeSub');
+      const clearFileSubBtn = document.getElementById('clearFileSubBtn');
+
+      // 控制与预览
+      const orderPrimaryFirst = document.getElementById('orderPrimaryFirst');
+      const orderSecondaryFirst = document.getElementById('orderSecondaryFirst');
+      const downloadMergeBtn = document.getElementById('downloadMergeBtn');
+      const statusSummaryMerge = document.getElementById('statusSummaryMerge');
+      const previewSectionMerge = document.getElementById('previewSectionMerge');
+      const previewCountNoteMerge = document.getElementById('previewCountNoteMerge');
+      const previewTbodyMerge = document.getElementById('previewTbodyMerge');
+
+      /**
+       * 时间码转毫秒
+       */
+      function timeToMs(t) {
+        if (!t) return 0;
+        const parts = t.trim().split(/[:,.]/);
+        if (parts.length < 4) return 0;
+        const h = parseInt(parts[0], 10) || 0;
+        const m = parseInt(parts[1], 10) || 0;
+        const s = parseInt(parts[2], 10) || 0;
+        const msStr = (parts[3] || '0').padEnd(3, '0').slice(0, 3);
+        const ms = parseInt(msStr, 10) || 0;
+        return h * 3600000 + m * 60000 + s * 1000 + ms;
+      }
+
+      /**
+       * 毫秒转标准 SRT 时间格式 HH:MM:SS,mmm
+       */
+      function msToTime(ms) {
+        if (ms < 0) ms = 0;
+        const h = Math.floor(ms / 3600000);
+        ms %= 3600000;
+        const m = Math.floor(ms / 60000);
+        ms %= 60000;
+        const s = Math.floor(ms / 1000);
+        const remMs = ms % 1000;
+        return String(h).padStart(2, '0') + ':' +
+               String(m).padStart(2, '0') + ':' +
+               String(s).padStart(2, '0') + ',' +
+               String(remMs).padStart(3, '0');
+      }
+
+      /**
+       * 解码字节流（复用 BOM、严格 UTF-8、回退 GBK 逻辑）
+       */
+      function decodeSubtitleBuffer(buffer) {
+        const bytes = new Uint8Array(buffer);
+        const hasBom = (bytes.length >= 3 && bytes[0] === 0xEF && bytes[1] === 0xBB && bytes[2] === 0xBF);
+        let isGbk = false;
+        let text = '';
+
+        if (hasBom) {
+          try {
+            const decoder = new TextDecoder('utf-8');
+            text = decoder.decode(bytes);
+          } catch (err) {
+            throw new Error('UTF-8 BOM 文件解码失败：' + err.message);
+          }
+        } else {
+          let utf8Success = false;
+          try {
+            const decoderUtf8 = new TextDecoder('utf-8', { fatal: true });
+            text = decoderUtf8.decode(bytes);
+            utf8Success = true;
+          } catch (utfErr) {
+            utf8Success = false;
+          }
+
+          if (!utf8Success) {
+            try {
+              const decoderGbk = new TextDecoder('gbk', { fatal: true });
+              text = decoderGbk.decode(bytes);
+              isGbk = true;
+            } catch (gbkErr) {
+              throw new Error('无法识别文件编码：已尝试 UTF-8 与 GBK 解码均失败，请检查文件是否为有效文本！');
+            }
+          }
+        }
+        return { text, hasBom, isGbk };
+      }
+
+      /**
+       * 通用字幕解析（支持标准 SRT 及 WebVTT）
+       */
+      function parseSubtitleText(text) {
+        if (!text) return [];
+        let cleanText = text.replace(/^\uFEFF/, '').replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+        cleanText = cleanText.replace(/^WEBVTT[^\n]*\n+/i, '');
+        const rawBlocks = cleanText.split(/\n\n+/);
+        const items = [];
+
+        for (let i = 0; i < rawBlocks.length; i++) {
+          const block = rawBlocks[i].trim();
+          if (!block) continue;
+          if (/^NOTE(\s|$)/i.test(block) || /^STYLE(\s|$)/i.test(block) || /^REGION(\s|$)/i.test(block)) {
+            continue;
+          }
+          const lines = block.split('\n');
+
+          let timeLineIdx = -1;
+          for (let j = 0; j < lines.length; j++) {
+            if (lines[j].includes('-->')) {
+              timeLineIdx = j;
+              break;
+            }
+          }
+          if (timeLineIdx === -1) continue;
+
+          const timeMatch = lines[timeLineIdx].match(/((?:\d{1,2}:)?\d{1,2}:\d{2})[,.](\d{1,3})\s*-->\s*((?:\d{1,2}:)?\d{1,2}:\d{2})[,.](\d{1,3})/);
+          if (!timeMatch) continue;
+
+          function normalizeTimeStr(mainPart, msPart) {
+            const parts = mainPart.split(':');
+            let h = '00', m = '00', s = '00';
+            if (parts.length === 2) {
+              m = parts[0].padStart(2, '0');
+              s = parts[1].padStart(2, '0');
+            } else if (parts.length === 3) {
+              h = parts[0].padStart(2, '0');
+              m = parts[1].padStart(2, '0');
+              s = parts[2].padStart(2, '0');
+            }
+            return h + ':' + m + ':' + s + ',' + (msPart || '0').padEnd(3, '0').slice(0, 3);
+          }
+
+          const startStr = normalizeTimeStr(timeMatch[1], timeMatch[2]);
+          const endStr = normalizeTimeStr(timeMatch[3], timeMatch[4]);
+          const startMs = timeToMs(startStr);
+          const endMs = timeToMs(endStr);
+          const textLines = lines.slice(timeLineIdx + 1);
+
+          items.push({
+            startMs,
+            endMs,
+            startStr,
+            endStr,
+            text: textLines.join('\n').trim()
+          });
+        }
+        return items;
+      }
+
+      /**
+       * 核心双语合并计算
+       */
+      function calculateMerge(mainItems, subItems, isPrimaryTop) {
+        if (!mainItems.length && !subItems.length) return [];
+        if (!mainItems.length) {
+          return subItems.map(s => ({
+            startMs: s.startMs,
+            endMs: s.endMs,
+            startStr: s.startStr,
+            endStr: s.endStr,
+            primaryText: '',
+            subText: s.text,
+            combinedText: s.text,
+            source: '仅副语言'
+          }));
+        }
+        if (!subItems.length) {
+          return mainItems.map(m => ({
+            startMs: m.startMs,
+            endMs: m.endMs,
+            startStr: m.startStr,
+            endStr: m.endStr,
+            primaryText: m.text,
+            subText: '',
+            combinedText: m.text,
+            source: '仅主语言'
+          }));
+        }
+
+        const merged = [];
+        const matchedSubIndices = new Set();
+
+        for (let i = 0; i < mainItems.length; i++) {
+          const m = mainItems[i];
+          const overlappingSubs = [];
+
+          for (let j = 0; j < subItems.length; j++) {
+            const s = subItems[j];
+            const overlapStart = Math.max(m.startMs, s.startMs);
+            const overlapEnd = Math.min(m.endMs, s.endMs);
+            const overlapDuration = overlapEnd - overlapStart;
+
+            if (overlapDuration > 0 || (m.startMs === s.startMs && m.endMs === s.endMs)) {
+              overlappingSubs.push({ index: j, item: s, overlap: overlapDuration });
+            }
+          }
+
+          let matchedSubText = '';
+          if (overlappingSubs.length > 0) {
+            // 所有重叠副语言文本按开始时间排序，用空格拼成一段
+            overlappingSubs.sort((a, b) => a.item.startMs - b.item.startMs);
+            overlappingSubs.forEach(subObj => matchedSubIndices.add(subObj.index));
+            matchedSubText = overlappingSubs.map(subObj => subObj.item.text).join(' ');
+          }
+
+          const mClean = m.text.replace(/\s+/g, '');
+          const sClean = matchedSubText.replace(/\s+/g, '');
+
+          let combined = '';
+          let sourceLabel = '';
+
+          if (matchedSubText && mClean === sClean) {
+            combined = m.text;
+            sourceLabel = '去重合并';
+          } else if (matchedSubText) {
+            combined = isPrimaryTop ? (m.text + '\n' + matchedSubText) : (matchedSubText + '\n' + m.text);
+            sourceLabel = '双语对齐';
+          } else {
+            combined = m.text;
+            sourceLabel = '仅主语言';
+          }
+
+          merged.push({
+            startMs: m.startMs,
+            endMs: m.endMs,
+            startStr: m.startStr,
+            endStr: m.endStr,
+            primaryText: m.text,
+            subText: matchedSubText,
+            combinedText: combined,
+            source: sourceLabel
+          });
+        }
+
+        // 无重叠的副语言独立插入，不丢内容
+        for (let j = 0; j < subItems.length; j++) {
+          if (!matchedSubIndices.has(j)) {
+            const s = subItems[j];
+            merged.push({
+              startMs: s.startMs,
+              endMs: s.endMs,
+              startStr: s.startStr,
+              endStr: s.endStr,
+              primaryText: '',
+              subText: s.text,
+              combinedText: s.text,
+              source: '副语言独立'
+            });
+          }
+        }
+
+        // 按时间轴开始时间升序排序
+        merged.sort((a, b) => {
+          if (a.startMs !== b.startMs) return a.startMs - b.startMs;
+          return a.endMs - b.endMs;
+        });
+
+        return merged;
+      }
+
+      // 转义 HTML 字符
+      const escapeHtml = str => String(str).replace(/[&<>"']/g, m => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      }[m]));
+
+      function renderTableRow(item, idx) {
+        let contentHtml = '';
+        if (item.primaryText && item.subText && item.primaryText.replace(/\s+/g, '') !== item.subText.replace(/\s+/g, '')) {
+          if (primaryOnTop) {
+            contentHtml = '<span class="bilingual-sub-line primary-lang">' + escapeHtml(item.primaryText).replace(/\n/g, '<br>') + '</span>' +
+                          '<span class="bilingual-sub-line secondary-lang">' + escapeHtml(item.subText).replace(/\n/g, '<br>') + '</span>';
+          } else {
+            contentHtml = '<span class="bilingual-sub-line secondary-lang">' + escapeHtml(item.subText).replace(/\n/g, '<br>') + '</span>' +
+                          '<span class="bilingual-sub-line primary-lang">' + escapeHtml(item.primaryText).replace(/\n/g, '<br>') + '</span>';
+          }
+        } else {
+          contentHtml = '<span class="bilingual-sub-line primary-lang">' + escapeHtml(item.combinedText).replace(/\n/g, '<br>') + '</span>';
+        }
+
+        let sourceBadgeStyle = 'color:#64748B; background:#F1F5F9;';
+        if (item.source === '双语对齐') sourceBadgeStyle = 'color:#15803D; background:#DCFCE7;';
+        else if (item.source === '去重合并') sourceBadgeStyle = 'color:#0369A1; background:#E0F2FE;';
+        else if (item.source === '副语言独立') sourceBadgeStyle = 'color:#B45309; background:#FEF3C7;';
+
+        const sourceBadgeHtml = '<span style="display:inline-block; font-size:11px; padding:2px 6px; border-radius:4px; font-weight:600; ' + sourceBadgeStyle + '">' +
+          escapeHtml(item.source) + '</span>';
+
+        return '<tr>' +
+          '<td>' + (idx + 1) + '</td>' +
+          '<td class="time-shifted" style="font-size:12px;">' + escapeHtml(item.startStr + ' --> ' + item.endStr) + '</td>' +
+          '<td class="sub-text" style="max-width: 440px;">' + contentHtml + '</td>' +
+          '<td>' + sourceBadgeHtml + '</td>' +
+          '</tr>';
+      }
+
+      /**
+       * 刷新双语合并界面
+       */
+      function updateUI() {
+        // 更新主语言信息条
+        if (mainData.items.length > 0) {
+          fileInfoBarMain.classList.add('show');
+          fileNameDisplayMain.textContent = '📄 ' + (mainData.fileName || '已粘贴主字幕');
+          fileCountDisplayMain.textContent = '(' + mainData.items.length + ' 条)';
+          bomBadgeMain.style.display = mainData.hasBom ? 'inline-block' : 'none';
+          gbkBadgeMain.style.display = mainData.isGbk ? 'inline-block' : 'none';
+        } else {
+          fileInfoBarMain.classList.remove('show');
+        }
+
+        // 更新副语言信息条
+        if (subData.items.length > 0) {
+          fileInfoBarSub.classList.add('show');
+          fileNameDisplaySub.textContent = '📄 ' + (subData.fileName || '已粘贴副字幕');
+          fileCountDisplaySub.textContent = '(' + subData.items.length + ' 条)';
+          bomBadgeSub.style.display = subData.hasBom ? 'inline-block' : 'none';
+          gbkBadgeSub.style.display = subData.isGbk ? 'inline-block' : 'none';
+        } else {
+          fileInfoBarSub.classList.remove('show');
+        }
+
+        // 仅当两个字幕都加载后才可生成合并与下载
+        if (mainData.items.length === 0 || subData.items.length === 0) {
+          previewSectionMerge.classList.remove('show');
+          downloadMergeBtn.disabled = true;
+          if (mainData.items.length === 0 && subData.items.length === 0) {
+            statusSummaryMerge.textContent = '请分别添加主语言和副语言字幕';
+          } else if (mainData.items.length === 0) {
+            statusSummaryMerge.textContent = '已添加副语言，请补充主语言字幕';
+          } else {
+            statusSummaryMerge.textContent = '已添加主语言，请补充副语言字幕';
+          }
+          return;
+        }
+
+        mergedResults = calculateMerge(mainData.items, subData.items, primaryOnTop);
+
+        previewTbodyMerge.innerHTML = mergedResults.slice(0, 10).map((item, idx) => renderTableRow(item, idx)).join('');
+        previewSectionMerge.classList.add('show');
+        previewCountNoteMerge.textContent = '共合并生成 ' + mergedResults.length + ' 条字幕' + (mergedResults.length > 10 ? '，已展示前 10 条' : '，已全部展示');
+
+        downloadMergeBtn.disabled = false;
+        statusSummaryMerge.textContent = '准备就绪：合并完成（共 ' + mergedResults.length + ' 条），可直接下载双语 SRT';
+      }
+
+      /**
+       * 读取主语言文件
+       */
+      function handleMainFile(file) {
+        if (!file) return;
+        mainData.fileName = file.name;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          try {
+            const dec = decodeSubtitleBuffer(e.target.result);
+            mainData.hasBom = dec.hasBom;
+            mainData.isGbk = dec.isGbk;
+            mainData.items = parseSubtitleText(dec.text);
+            if (!mainData.items.length) {
+              alert('未能从主语言文件中解析出有效字幕，请检查格式！');
+              return;
+            }
+            updateUI();
+          } catch (err) {
+            alert(err.message);
+          }
+        };
+        reader.readAsArrayBuffer(file);
+      }
+
+      /**
+       * 读取副语言文件
+       */
+      function handleSubFile(file) {
+        if (!file) return;
+        subData.fileName = file.name;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          try {
+            const dec = decodeSubtitleBuffer(e.target.result);
+            subData.hasBom = dec.hasBom;
+            subData.isGbk = dec.isGbk;
+            subData.items = parseSubtitleText(dec.text);
+            if (!subData.items.length) {
+              alert('未能从副语言文件中解析出有效字幕，请检查格式！');
+              return;
+            }
+            updateUI();
+          } catch (err) {
+            alert(err.message);
+          }
+        };
+        reader.readAsArrayBuffer(file);
+      }
+
+      /**
+       * 粘贴主语言文本
+       */
+      function handleMainPaste() {
+        const text = pasteTextareaMain.value.trim();
+        if (!text) {
+          if (!mainData.fileName) {
+            mainData.items = [];
+            mainData.hasBom = false;
+            mainData.isGbk = false;
+            updateUI();
+          }
+          return;
+        }
+        mainData.fileName = 'pasted_main';
+        mainData.hasBom = text.charCodeAt(0) === 0xFEFF;
+        mainData.isGbk = false;
+        mainData.items = parseSubtitleText(text);
+        updateUI();
+      }
+
+      /**
+       * 粘贴副语言文本
+       */
+      function handleSubPaste() {
+        const text = pasteTextareaSub.value.trim();
+        if (!text) {
+          if (!subData.fileName) {
+            subData.items = [];
+            subData.hasBom = false;
+            subData.isGbk = false;
+            updateUI();
+          }
+          return;
+        }
+        subData.fileName = 'pasted_sub';
+        subData.hasBom = text.charCodeAt(0) === 0xFEFF;
+        subData.isGbk = false;
+        subData.items = parseSubtitleText(text);
+        updateUI();
+      }
+
+      /**
+       * 下载双语 SRT
+       */
+      function downloadBilingualSrt() {
+        if (!mergedResults.length) return;
+
+        // 生成标准 SRT 格式，换行保持 CRLF
+        const blocks = mergedResults.map((item, index) => {
+          const id = String(index + 1);
+          const timeLine = item.startStr + ' --> ' + item.endStr;
+          const text = (item.combinedText || '').replace(/\r\n/g, '\n').replace(/\r/g, '\n').replace(/\n/g, '\r\n');
+          return id + '\r\n' + timeLine + '\r\n' + text;
+        });
+
+        const srtContent = blocks.join('\r\n\r\n') + '\r\n';
+
+        // 文件名用主语言原名加 _bilingual 后缀，如 movie_bilingual.srt
+        const baseName = mainData.fileName || 'subtitle.srt';
+        const dotIdx = baseName.lastIndexOf('.');
+        const nameWithoutExt = dotIdx !== -1 ? baseName.slice(0, dotIdx) : baseName;
+        const outputFileName = nameWithoutExt + '_bilingual.srt';
+
+        // 处理 BOM：原主语言文件含 UTF-8 BOM 则写回 BOM
+        let blobParts = [];
+        if (mainData.hasBom) {
+          const bomBytes = new Uint8Array([0xEF, 0xBB, 0xBF]);
+          blobParts.push(bomBytes);
+        }
+        blobParts.push(srtContent);
+
+        const blob = new Blob(blobParts, { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = outputFileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(url), 5000);
+      }
+
+      /* ===== 事件监听 ===== */
+
+      // 主语言上传与拖拽
+      dropZoneMain.addEventListener('click', () => fileInputMain.click());
+      dropZoneMain.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          fileInputMain.click();
+        }
+      });
+      ['dragenter', 'dragover'].forEach(n => {
+        dropZoneMain.addEventListener(n, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          dropZoneMain.classList.add('dragover');
+        });
+      });
+      ['dragleave', 'drop'].forEach(n => {
+        dropZoneMain.addEventListener(n, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          dropZoneMain.classList.remove('dragover');
+        });
+      });
+      dropZoneMain.addEventListener('drop', (e) => {
+        const files = e.dataTransfer.files;
+        if (files && files.length > 0) handleMainFile(files[0]);
+      });
+      fileInputMain.addEventListener('change', (e) => {
+        if (e.target.files && e.target.files.length > 0) handleMainFile(e.target.files[0]);
+      });
+
+      // 副语言上传与拖拽
+      dropZoneSub.addEventListener('click', () => fileInputSub.click());
+      dropZoneSub.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          fileInputSub.click();
+        }
+      });
+      ['dragenter', 'dragover'].forEach(n => {
+        dropZoneSub.addEventListener(n, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          dropZoneSub.classList.add('dragover');
+        });
+      });
+      ['dragleave', 'drop'].forEach(n => {
+        dropZoneSub.addEventListener(n, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          dropZoneSub.classList.remove('dragover');
+        });
+      });
+      dropZoneSub.addEventListener('drop', (e) => {
+        const files = e.dataTransfer.files;
+        if (files && files.length > 0) handleSubFile(files[0]);
+      });
+      fileInputSub.addEventListener('change', (e) => {
+        if (e.target.files && e.target.files.length > 0) handleSubFile(e.target.files[0]);
+      });
+
+      // 粘贴切换与输入
+      togglePasteMainBtn.addEventListener('click', () => {
+        const isShown = pasteBoxMain.classList.toggle('show');
+        togglePasteMainBtn.textContent = isShown ? '收起粘贴' : '✏️ 粘贴文本';
+        if (isShown) pasteTextareaMain.focus();
+      });
+      pasteTextareaMain.addEventListener('input', handleMainPaste);
+
+      togglePasteSubBtn.addEventListener('click', () => {
+        const isShown = pasteBoxSub.classList.toggle('show');
+        togglePasteSubBtn.textContent = isShown ? '收起粘贴' : '✏️ 粘贴文本';
+        if (isShown) pasteTextareaSub.focus();
+      });
+      pasteTextareaSub.addEventListener('input', handleSubPaste);
+
+      // 清除
+      clearFileMainBtn.addEventListener('click', () => {
+        mainData.fileName = '';
+        mainData.hasBom = false;
+        mainData.isGbk = false;
+        mainData.items = [];
+        fileInputMain.value = '';
+        pasteTextareaMain.value = '';
+        updateUI();
+      });
+
+      clearFileSubBtn.addEventListener('click', () => {
+        subData.fileName = '';
+        subData.hasBom = false;
+        subData.isGbk = false;
+        subData.items = [];
+        fileInputSub.value = '';
+        pasteTextareaSub.value = '';
+        updateUI();
+      });
+
+      // 顺序切换单选框
+      orderPrimaryFirst.addEventListener('change', () => {
+        if (orderPrimaryFirst.checked) {
+          primaryOnTop = true;
+          updateUI();
+        }
+      });
+      orderSecondaryFirst.addEventListener('change', () => {
+        if (orderSecondaryFirst.checked) {
+          primaryOnTop = false;
+          updateUI();
+        }
+      });
+
+      // 下载
+      downloadMergeBtn.addEventListener('click', downloadBilingualSrt);
 
     })();
   </script>
