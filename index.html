@@ -341,7 +341,7 @@
     }
 
     /* ===== Shift Tool Styles ===== */
-    .shift-container {
+    .shift-container, .convert-container {
       padding: 24px 32px 32px;
       display: flex;
       flex-direction: column;
@@ -478,6 +478,15 @@
     .badge-gbk {
       background: #FEF3C7;
       color: #B45309;
+      font-size: 11px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+
+    .badge-format {
+      background: #EDE9FE;
+      color: #6D28D9;
       font-size: 11px;
       padding: 2px 6px;
       border-radius: 4px;
@@ -1108,61 +1117,111 @@
         <div class="tool-card-header">
           <div class="tool-emoji purple">🔄</div>
           <div>
-            <h2>格式互转</h2>
-            <p>在主流字幕格式之间自由转换，保留原始时间轴与文本内容，无任何质量损失。</p>
+            <h2>格式互转 (SRT ⇄ WebVTT)</h2>
+            <p>在 SRT 与 WebVTT 格式之间双向自由转换，时间码自动适配逗号与点号，保留原始时间轴与多行正文，纯浏览器本地完成。</p>
           </div>
         </div>
 
-        <div class="coming-banner">
-          <span class="banner-icon">🚧</span>
-          <div>
-            <strong>功能即将上线</strong> — 本工具正在开发中，敬请期待！
+        <div class="convert-container">
+          <!-- 上传 / 拖放区域 -->
+          <div
+            id="dropZoneConvert"
+            class="drop-zone"
+            tabindex="0"
+            role="button"
+            aria-label="点击或拖拽上传 SRT 或 VTT 文件"
+          >
+            <input
+              type="file"
+              id="fileInputConvert"
+              class="file-input-hidden"
+              accept=".srt,.vtt,text/vtt"
+            />
+            <div class="drop-icon">🔄</div>
+            <div class="drop-title">点击或拖拽 .srt 或 .vtt 文件到这里</div>
+            <div class="drop-hint">自动识别输入格式，支持标准 WebVTT 与 SRT，保留 UTF-8 BOM，支持 GBK 容错</div>
           </div>
+
+          <!-- 粘贴切换与文本框 -->
+          <div class="paste-toggle-row">
+            <button type="button" class="btn-link" id="togglePasteConvertBtn">
+              ✏️ 手动粘贴 SRT / VTT 文本
+            </button>
+          </div>
+
+          <div class="paste-box" id="pasteBoxConvert">
+            <textarea
+              id="pasteTextareaConvert"
+              class="paste-textarea"
+              placeholder="在此粘贴 SRT 或 WebVTT 文本，例如：&#10;WEBVTT&#10;&#10;1&#10;00:00:01.000 --> 00:00:04.500&#10;Hello world"
+              spellcheck="false"
+            ></textarea>
+          </div>
+
+          <!-- 文件已加载信息条 -->
+          <div class="file-info-bar" id="fileInfoBarConvert">
+            <div class="file-info-left">
+              <span id="fileNameDisplayConvert">📄 sample.srt</span>
+              <span id="fileCountDisplayConvert" style="color: #64748B; font-size: 12px;">(0 条字幕)</span>
+              <div class="file-info-tags">
+                <span class="badge-format" id="detectedFormatBadge">识别格式: SRT</span>
+                <span class="badge-bom" id="bomBadgeConvert" style="display: none;">UTF-8 BOM</span>
+                <span class="badge-gbk" id="gbkBadgeConvert" style="display: none;">GBK 解码</span>
+              </div>
+            </div>
+            <button type="button" class="btn-clear" id="clearFileConvertBtn" title="清除重新选择">
+              ✕ 清除
+            </button>
+          </div>
+
+          <!-- 转换方向指示卡片 -->
+          <div class="control-card">
+            <div class="control-row">
+              <span class="control-label">转换目标：</span>
+              <div id="targetFormatDisplay" style="font-size: 14px; font-weight: 600; color: #6D28D9;">
+                请先导入字幕文件或粘贴文本
+              </div>
+            </div>
+            <div style="font-size: 13px; color: var(--text-muted); line-height: 1.5;">
+              • <strong>SRT 转 VTT</strong>：在首行插入 <code style="background:#F1F5F9; padding:2px 4px; border-radius:4px;">WEBVTT</code> 文件头，时间码毫秒分隔符自动由逗号改为点号。<br>
+              • <strong>VTT 转 SRT</strong>：去除 <code style="background:#F1F5F9; padding:2px 4px; border-radius:4px;">WEBVTT</code> 头并补齐标准序号，时间码毫秒分隔符自动由点号改为逗号。
+            </div>
+          </div>
+
+          <!-- 操作栏：下载按钮与状态统计 -->
+          <div class="action-bar">
+            <button type="button" id="downloadConvertBtn" class="btn-primary" disabled>
+              <span>💾</span>
+              <span id="downloadBtnTextConvert">下载转换后的字幕</span>
+            </button>
+            <span class="status-summary" id="statusSummaryConvert">请先选择或粘贴 SRT / VTT 字幕</span>
+          </div>
+
+          <!-- 实时预览区 -->
+          <div class="preview-section" id="previewSectionConvert">
+            <div class="preview-header">
+              <span>字幕转换预览（展示前 10 条）</span>
+              <span id="previewCountNoteConvert" style="font-size: 12px; color: var(--text-muted);">共 0 条</span>
+            </div>
+            <div class="preview-table-wrapper">
+              <table class="preview-table">
+                <thead>
+                  <tr>
+                    <th style="width: 50px;">#</th>
+                    <th>原始时间轴</th>
+                    <th>转换后时间轴</th>
+                    <th>字幕正文</th>
+                  </tr>
+                </thead>
+                <tbody id="previewTbodyConvert">
+                  <!-- 动态插入行 -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
         </div>
 
-        <div class="feature-section">
-          <h3>计划功能</h3>
-          <ul class="feature-list">
-            <li>
-              <span class="feat-icon">🎯</span>
-              <span>
-                <span class="feat-label">多格式互转</span>
-                <span class="feat-desc">SRT / VTT / ASS / LRC 随意切换</span>
-              </span>
-            </li>
-            <li>
-              <span class="feat-icon">📦</span>
-              <span>
-                <span class="feat-label">批量转换</span>
-                <span class="feat-desc">一次选择多个文件，批量处理</span>
-              </span>
-            </li>
-            <li>
-              <span class="feat-icon">🏷️</span>
-              <span>
-                <span class="feat-label">样式保留</span>
-                <span class="feat-desc">尽可能保留原始字体、颜色样式</span>
-              </span>
-            </li>
-            <li>
-              <span class="feat-icon">📋</span>
-              <span>
-                <span class="feat-label">纯文本提取</span>
-                <span class="feat-desc">可选仅导出时间轴和纯文字</span>
-              </span>
-            </li>
-          </ul>
-        </div>
-
-        <div class="format-flow">
-          <span class="format-tag blue">SRT</span>
-          <span class="arrow">⇄</span>
-          <span class="format-tag green">VTT</span>
-          <span class="arrow">⇄</span>
-          <span class="format-tag purple">ASS</span>
-          <span class="arrow">⇄</span>
-          <span class="format-tag gray">LRC</span>
-        </div>
       </div>
     </section>
 
@@ -1770,6 +1829,465 @@
 
       // 下载按钮
       downloadBtn.addEventListener('click', downloadShiftedSRT);
+
+    })();
+
+    /* ============================================================
+     * 格式互转工具：SRT ⇄ WebVTT (纯本地实现，零网络请求)
+     * ============================================================ */
+    (function initConvertTool() {
+      // 状态变量
+      let currentFileName = '';
+      let inputFormat = ''; // 'srt' 或 'vtt'
+      let hasBom = false;
+      let isGbk = false;
+      let parsedItems = []; // 存储结构化解析内容 { id, startStr, endStr, newStartStr, newEndStr, settings, text }
+
+      // DOM 元素引用
+      const dropZone = document.getElementById('dropZoneConvert');
+      const fileInput = document.getElementById('fileInputConvert');
+      const togglePasteBtn = document.getElementById('togglePasteConvertBtn');
+      const pasteBox = document.getElementById('pasteBoxConvert');
+      const pasteTextarea = document.getElementById('pasteTextareaConvert');
+      const fileInfoBar = document.getElementById('fileInfoBarConvert');
+      const fileNameDisplay = document.getElementById('fileNameDisplayConvert');
+      const fileCountDisplay = document.getElementById('fileCountDisplayConvert');
+      const detectedFormatBadge = document.getElementById('detectedFormatBadge');
+      const bomBadge = document.getElementById('bomBadgeConvert');
+      const gbkBadge = document.getElementById('gbkBadgeConvert');
+      const clearFileBtn = document.getElementById('clearFileConvertBtn');
+      const targetFormatDisplay = document.getElementById('targetFormatDisplay');
+      const downloadBtn = document.getElementById('downloadConvertBtn');
+      const downloadBtnText = document.getElementById('downloadBtnTextConvert');
+      const statusSummary = document.getElementById('statusSummaryConvert');
+      const previewSection = document.getElementById('previewSectionConvert');
+      const previewCountNote = document.getElementById('previewCountNoteConvert');
+      const previewTbody = document.getElementById('previewTbodyConvert');
+
+      /**
+       * 识别文本格式是 VTT 还是 SRT
+       */
+      function detectFormat(text, filename) {
+        const clean = text.replace(/^\uFEFF/, '').trim();
+        if (/^WEBVTT(\s|$)/i.test(clean)) {
+          return 'vtt';
+        }
+        if (filename) {
+          const lower = filename.toLowerCase();
+          if (lower.endsWith('.vtt')) return 'vtt';
+          if (lower.endsWith('.srt')) return 'srt';
+        }
+        // 如果文本里包含点号时间轴格式且没有序号通常是 VTT
+        return 'srt';
+      }
+
+      /**
+       * 格式化 SRT 时间 HH:MM:SS,mmm
+       */
+      function formatSrtTime(mainPart, msPart) {
+        const parts = mainPart.split(':');
+        let h = '00', m = '00', s = '00';
+        if (parts.length === 2) {
+          m = parts[0].padStart(2, '0');
+          s = parts[1].padStart(2, '0');
+        } else if (parts.length === 3) {
+          h = parts[0].padStart(2, '0');
+          m = parts[1].padStart(2, '0');
+          s = parts[2].padStart(2, '0');
+        }
+        return h + ':' + m + ':' + s + ',' + (msPart || '0').padEnd(3, '0').slice(0, 3);
+      }
+
+      /**
+       * 格式化 VTT 时间 HH:MM:SS.mmm
+       */
+      function formatVttTime(mainPart, msPart) {
+        const parts = mainPart.split(':');
+        let h = '00', m = '00', s = '00';
+        if (parts.length === 2) {
+          h = '00';
+          m = parts[0].padStart(2, '0');
+          s = parts[1].padStart(2, '0');
+        } else if (parts.length === 3) {
+          h = parts[0].padStart(2, '0');
+          m = parts[1].padStart(2, '0');
+          s = parts[2].padStart(2, '0');
+        }
+        return h + ':' + m + ':' + s + '.' + (msPart || '0').padEnd(3, '0').slice(0, 3);
+      }
+
+      /**
+       * 解析 SRT 并准备转为 VTT
+       */
+      function parseSrtForConvert(text) {
+        const cleanText = text.replace(/^\uFEFF/, '').replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+        const rawBlocks = cleanText.split(/\n\n+/);
+        const items = [];
+
+        for (let i = 0; i < rawBlocks.length; i++) {
+          const block = rawBlocks[i].trim();
+          if (!block) continue;
+          const lines = block.split('\n');
+
+          let timeLineIdx = -1;
+          for (let j = 0; j < lines.length; j++) {
+            if (lines[j].includes('-->')) {
+              timeLineIdx = j;
+              break;
+            }
+          }
+          if (timeLineIdx === -1) continue;
+
+          const timeMatch = lines[timeLineIdx].match(/((?:\d{1,2}:)?\d{1,2}:\d{2})[,.](\d{1,3})\s*-->\s*((?:\d{1,2}:)?\d{1,2}:\d{2})[,.](\d{1,3})(.*)/);
+          if (!timeMatch) continue;
+
+          const id = lines.slice(0, timeLineIdx).join(' ').trim() || String(items.length + 1);
+          const origStart = timeMatch[1].padStart(8, '0') + ',' + timeMatch[2].padEnd(3, '0').slice(0, 3);
+          const origEnd = timeMatch[3].padStart(8, '0') + ',' + timeMatch[4].padEnd(3, '0').slice(0, 3);
+          const settings = timeMatch[5] || '';
+
+          const newStart = formatVttTime(timeMatch[1], timeMatch[2]);
+          const newEnd = formatVttTime(timeMatch[3], timeMatch[4]);
+          const textLines = lines.slice(timeLineIdx + 1);
+
+          items.push({
+            id,
+            origStartStr: origStart,
+            origEndStr: origEnd,
+            newStartStr: newStart,
+            newEndStr: newEnd,
+            settings,
+            text: textLines.join('\n')
+          });
+        }
+        return items;
+      }
+
+      /**
+       * 解析 VTT 并准备转为 SRT
+       */
+      function parseVttForConvert(text) {
+        let cleanText = text.replace(/^\uFEFF/, '').replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+        cleanText = cleanText.replace(/^WEBVTT[^\n]*\n+/i, '');
+        const rawBlocks = cleanText.split(/\n\n+/);
+        const items = [];
+        let autoId = 1;
+
+        for (let i = 0; i < rawBlocks.length; i++) {
+          const block = rawBlocks[i].trim();
+          if (!block) continue;
+          if (/^NOTE(\s|$)/i.test(block) || /^STYLE(\s|$)/i.test(block) || /^REGION(\s|$)/i.test(block)) {
+            continue;
+          }
+          const lines = block.split('\n');
+
+          let timeLineIdx = -1;
+          for (let j = 0; j < lines.length; j++) {
+            if (lines[j].includes('-->')) {
+              timeLineIdx = j;
+              break;
+            }
+          }
+          if (timeLineIdx === -1) continue;
+
+          const timeMatch = lines[timeLineIdx].match(/((?:\d{1,2}:)?\d{1,2}:\d{2})[,.](\d{1,3})\s*-->\s*((?:\d{1,2}:)?\d{1,2}:\d{2})[,.](\d{1,3})(.*)/);
+          if (!timeMatch) continue;
+
+          let id = lines.slice(0, timeLineIdx).join(' ').trim();
+          if (!id) {
+            id = String(autoId);
+          }
+          autoId++;
+
+          const origStart = timeMatch[1] + '.' + timeMatch[2].padEnd(3, '0').slice(0, 3);
+          const origEnd = timeMatch[3] + '.' + timeMatch[4].padEnd(3, '0').slice(0, 3);
+          const settings = timeMatch[5] || '';
+
+          const newStart = formatSrtTime(timeMatch[1], timeMatch[2]);
+          const newEnd = formatSrtTime(timeMatch[3], timeMatch[4]);
+          const textLines = lines.slice(timeLineIdx + 1);
+
+          items.push({
+            id,
+            origStartStr: origStart,
+            origEndStr: origEnd,
+            newStartStr: newStart,
+            newEndStr: newEnd,
+            settings,
+            text: textLines.join('\n')
+          });
+        }
+        return items;
+      }
+
+      // 转义 HTML 字符
+      const escapeHtml = str => String(str).replace(/[&<>"']/g, m => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      }[m]));
+
+      function renderTableRow(item, idx) {
+        return '<tr>' +
+          '<td>' + escapeHtml(item.id || (idx + 1)) + '</td>' +
+          '<td class="time-orig">' + escapeHtml(item.origStartStr + ' --> ' + item.origEndStr) + '</td>' +
+          '<td class="time-shifted">' + escapeHtml(item.newStartStr + ' --> ' + item.newEndStr) + '</td>' +
+          '<td class="sub-text">' + escapeHtml(item.text).replace(/\n/g, '<br>') + '</td>' +
+          '</tr>';
+      }
+
+      /**
+       * 更新转换 UI
+       */
+      function updateUI() {
+        if (parsedItems.length === 0) {
+          fileInfoBar.classList.remove('show');
+          previewSection.classList.remove('show');
+          downloadBtn.disabled = true;
+          statusSummary.textContent = '请先选择或粘贴 SRT / VTT 字幕';
+          targetFormatDisplay.textContent = '请先导入字幕文件或粘贴文本';
+          return;
+        }
+
+        // 文件信息条
+        fileInfoBar.classList.add('show');
+        fileNameDisplay.textContent = '📄 ' + (currentFileName || '已粘贴字幕');
+        fileCountDisplay.textContent = '(' + parsedItems.length + ' 条字幕)';
+        detectedFormatBadge.textContent = '识别格式: ' + inputFormat.toUpperCase();
+        bomBadge.style.display = hasBom ? 'inline-block' : 'none';
+        gbkBadge.style.display = isGbk ? 'inline-block' : 'none';
+
+        const targetFormat = inputFormat === 'srt' ? 'WebVTT (.vtt)' : 'SubRip (.srt)';
+        targetFormatDisplay.innerHTML = '<span style="color:#2563EB;">' + inputFormat.toUpperCase() + '</span>' +
+          ' <span style="color:#64748B;">➔ 转换为</span> ' +
+          '<span style="color:#059669;">' + targetFormat + '</span>';
+
+        downloadBtn.disabled = false;
+        downloadBtnText.textContent = '下载转换后的 ' + (inputFormat === 'srt' ? 'VTT' : 'SRT') + ' 文件';
+        statusSummary.textContent = '准备就绪：已解析 ' + parsedItems.length + ' 条字幕，可下载转换文件';
+
+        // 预览表格：展示前 10 条
+        const total = parsedItems.length;
+        const previewItems = parsedItems.slice(0, 10);
+        previewTbody.innerHTML = previewItems.map((item, idx) => renderTableRow(item, idx)).join('');
+        previewSection.classList.add('show');
+        previewCountNote.textContent = '共 ' + total + ' 条字幕' + (total > 10 ? '，已展示前 10 条' : '，已全部展示');
+      }
+
+      /**
+       * 从原始字节解码文本（复用功能一编码策略）
+       */
+      function decodeSubtitleBuffer(buffer) {
+        const bytes = new Uint8Array(buffer);
+        hasBom = (bytes.length >= 3 && bytes[0] === 0xEF && bytes[1] === 0xBB && bytes[2] === 0xBF);
+        isGbk = false;
+        let text = '';
+
+        if (hasBom) {
+          try {
+            const decoder = new TextDecoder('utf-8');
+            text = decoder.decode(bytes);
+          } catch (err) {
+            throw new Error('UTF-8 BOM 文件解码失败：' + err.message);
+          }
+        } else {
+          let utf8Success = false;
+          try {
+            const decoderUtf8 = new TextDecoder('utf-8', { fatal: true });
+            text = decoderUtf8.decode(bytes);
+            utf8Success = true;
+          } catch (utfErr) {
+            utf8Success = false;
+          }
+
+          if (!utf8Success) {
+            try {
+              const decoderGbk = new TextDecoder('gbk', { fatal: true });
+              text = decoderGbk.decode(bytes);
+              isGbk = true;
+            } catch (gbkErr) {
+              throw new Error('无法识别文件编码：已尝试 UTF-8 与 GBK 解码均失败，请检查文件是否为有效文本！');
+            }
+          }
+        }
+        return text;
+      }
+
+      /**
+       * 处理选择或拖拽的文件
+       */
+      function handleFile(file) {
+        if (!file) return;
+        currentFileName = file.name;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          try {
+            const text = decodeSubtitleBuffer(e.target.result);
+            inputFormat = detectFormat(text, currentFileName);
+
+            if (inputFormat === 'srt') {
+              parsedItems = parseSrtForConvert(text);
+            } else {
+              parsedItems = parseVttForConvert(text);
+            }
+
+            if (parsedItems.length === 0) {
+              alert('未能从该文件中解析出有效字幕，请确认是否为标准的 SRT 或 WebVTT 格式。');
+              return;
+            }
+
+            updateUI();
+          } catch (err) {
+            alert(err.message);
+          }
+        };
+        reader.readAsArrayBuffer(file);
+      }
+
+      /**
+       * 处理手动粘贴输入
+       */
+      function handlePasteInput() {
+        const text = pasteTextarea.value.trim();
+        if (!text) {
+          if (!currentFileName) {
+            parsedItems = [];
+            isGbk = false;
+            hasBom = false;
+            updateUI();
+          }
+          return;
+        }
+
+        currentFileName = 'pasted_subtitle';
+        hasBom = text.charCodeAt(0) === 0xFEFF;
+        isGbk = false;
+
+        inputFormat = detectFormat(text, '');
+        if (inputFormat === 'srt') {
+          parsedItems = parseSrtForConvert(text);
+        } else {
+          parsedItems = parseVttForConvert(text);
+        }
+
+        updateUI();
+      }
+
+      /**
+       * 构建并下载转换后的字幕文件
+       */
+      function downloadConvertedFile() {
+        if (parsedItems.length === 0) return;
+
+        let outputContent = '';
+        let targetExt = '';
+
+        if (inputFormat === 'srt') {
+          // 转 WebVTT
+          targetExt = '.vtt';
+          const blocks = parsedItems.map(item => {
+            let blockStr = '';
+            if (item.id) blockStr += item.id + '\n';
+            blockStr += item.newStartStr + ' --> ' + item.newEndStr + (item.settings ? item.settings : '') + '\n';
+            blockStr += item.text;
+            return blockStr;
+          });
+          outputContent = 'WEBVTT\n\n' + blocks.join('\n\n') + '\n';
+        } else {
+          // 转 SRT（保持 CRLF 换行规范）
+          targetExt = '.srt';
+          const blocks = parsedItems.map((item, index) => {
+            const id = String(index + 1);
+            const timeLine = item.newStartStr + ' --> ' + item.newEndStr;
+            const text = (item.text || '').replace(/\r\n/g, '\n').replace(/\r/g, '\n').replace(/\n/g, '\r\n');
+            return id + '\r\n' + timeLine + '\r\n' + text;
+          });
+          outputContent = blocks.join('\r\n\r\n') + '\r\n';
+        }
+
+        // 文件名保留原名、替换后缀
+        const baseName = currentFileName || ('subtitle' + (inputFormat === 'srt' ? '.srt' : '.vtt'));
+        const dotIdx = baseName.lastIndexOf('.');
+        const nameWithoutExt = dotIdx !== -1 ? baseName.slice(0, dotIdx) : baseName;
+        const outputFileName = nameWithoutExt + targetExt;
+
+        // 处理 BOM：原文件含 UTF-8 BOM 则保留 BOM；GBK 来源的文件导出为不带 BOM 的 UTF-8
+        let blobParts = [];
+        if (hasBom) {
+          const bomBytes = new Uint8Array([0xEF, 0xBB, 0xBF]);
+          blobParts.push(bomBytes);
+        }
+        blobParts.push(outputContent);
+
+        const blob = new Blob(blobParts, { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = outputFileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(url), 5000);
+      }
+
+      /* ===== 事件绑定 ===== */
+
+      dropZone.addEventListener('click', () => fileInput.click());
+      dropZone.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          fileInput.click();
+        }
+      });
+
+      ['dragenter', 'dragover'].forEach(name => {
+        dropZone.addEventListener(name, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          dropZone.classList.add('dragover');
+        });
+      });
+
+      ['dragleave', 'drop'].forEach(name => {
+        dropZone.addEventListener(name, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          dropZone.classList.remove('dragover');
+        });
+      });
+
+      dropZone.addEventListener('drop', (e) => {
+        const files = e.dataTransfer.files;
+        if (files && files.length > 0) {
+          handleFile(files[0]);
+        }
+      });
+
+      fileInput.addEventListener('change', (e) => {
+        if (e.target.files && e.target.files.length > 0) {
+          handleFile(e.target.files[0]);
+        }
+      });
+
+      togglePasteBtn.addEventListener('click', () => {
+        const isShown = pasteBox.classList.toggle('show');
+        togglePasteBtn.textContent = isShown ? '收起粘贴区域' : '✏️ 手动粘贴 SRT / VTT 文本';
+        if (isShown) pasteTextarea.focus();
+      });
+
+      pasteTextarea.addEventListener('input', handlePasteInput);
+
+      clearFileBtn.addEventListener('click', () => {
+        parsedItems = [];
+        currentFileName = '';
+        inputFormat = '';
+        hasBom = false;
+        isGbk = false;
+        fileInput.value = '';
+        pasteTextarea.value = '';
+        updateUI();
+      });
+
+      downloadBtn.addEventListener('click', downloadConvertedFile);
 
     })();
   </script>
